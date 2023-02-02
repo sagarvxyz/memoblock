@@ -1,2 +1,3 @@
-# text-editor
-A simple and importable JS text editor.
+# Memoblock
+
+An app for crafting memos and building on your work.
