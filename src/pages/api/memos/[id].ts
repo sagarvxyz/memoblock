@@ -1,15 +1,21 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { db } from 'docs/db';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'GET') {
-    const data = await GET(req, res);
-    res.json(data);
+    GET(req, res);
   }
 }
 
 async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const data = 'GET worked';
+    let { id } = req.query;
+    let memoId = id as keyof typeof memosDb;
+    const memosDb = db.Memo;
+    const data = memosDb[memoId];
     return res.json(data);
   } catch (error) {
     if (!(error instanceof Error)) {

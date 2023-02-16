@@ -5,67 +5,67 @@ info:
   description: Internal API docs for memoblock.
   version: 0.1.0
 servers:
-- url: https://virtserver.swaggerhub.com/sagarvxyz/memoblock/0.1.0
-  description: SwaggerHub API Auto Mocking
+  - url: https://virtserver.swaggerhub.com/sagarvxyz/memoblock/0.1.0
+    description: SwaggerHub API Auto Mocking
 paths:
   /api/ideas/{id}:
     get:
       parameters:
-      - name: id
-        in: path
-        description: ID of Idea being acted on.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          description: ID of Idea being acted on.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Idea'
-        "400":
+        '400':
           description: Bad request. ID must be an integer.
-        "404":
+        '404':
           description: An Idea with that ID was not found.
-        "5XX":
+        '5XX':
           description: Unexpected error.
   /api/memos/{id}:
     get:
       parameters:
-      - name: id
-        in: path
-        description: ID of Memo being acted on.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          description: ID of Memo being acted on.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Memo'
-        "400":
+        '400':
           description: Bad request. ID must be an integer.
-        "404":
+        '404':
           description: A Memo with that ID was not found.
-        "5XX":
+        '5XX':
           description: Unexpected error.
     post:
       parameters:
-      - name: id
-        in: path
-        description: ID of Memo being acted on.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: integer
+        - name: id
+          in: path
+          description: ID of Memo being acted on.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:
@@ -73,17 +73,17 @@ paths:
               $ref: '#/components/schemas/Memo'
         required: true
       responses:
-        "201":
+        '201':
           description: Created Memo.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Memo'
-        "400":
+        '400':
           description: Bad request. Must include Memo ID and Memo schema in body.
-        "404":
+        '404':
           description: A Memo with that ID was not found.
-        "5XX":
+        '5XX':
           description: Unexpected error.
 components:
   schemas:
@@ -109,12 +109,13 @@ components:
         id:
           type: integer
           format: int64
+        type: string
         versions:
           type: array
           items:
             oneOf:
-            - $ref: '#/components/schemas/Block'
-            - $ref: '#/components/schemas/Memo'
+              - $ref: '#/components/schemas/Block'
+              - $ref: '#/components/schemas/Memo'
     Memo:
       type: object
       properties:
@@ -146,3 +147,9 @@ components:
           type: array
           items:
             type: string
+        createdAt:
+          type: string
+          format: date-time
+        modifiedAt:
+          type: string
+          format: date-time
