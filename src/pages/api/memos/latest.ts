@@ -1,4 +1,4 @@
-import { db } from 'docs/db';
+import { db } from 'prisma/db';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(

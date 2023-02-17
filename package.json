@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_ENV=DEV next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -13,18 +13,26 @@
     "@mdx-js/react": "^2.3.0",
     "@next/font": "13.1.6",
     "@next/mdx": "^13.1.6",
-    "@types/node": "18.11.18",
+    "@prisma/client": "^4.10.1",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
+    "bson": "^5.0.1",
+    "clear": "^0.1.0",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
     "next": "13.1.6",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "typescript": "4.9.5"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@types/node": "^18.13.0",
     "eslint-config-prettier": "^8.6.0",
-    "prettier": "2.8.3"
+    "prettier": "2.8.3",
+    "prisma": "^4.10.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }
