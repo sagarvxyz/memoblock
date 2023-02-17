@@ -1,29 +1,30 @@
-import { db } from 'prisma/db';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method === 'GET') {
-    GET(req, res);
+    return GET(req, res);
   }
 }
 
 async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const ideasDb = db.Idea;
-    const memosDb = db.Memo;
-    const data = Object.values(ideasDb).filter((idea) => idea.type === 'memo');
-    const latest = [];
-    for (const memo of data) {
-      const latestVersion = memo.versions[
-        memo.versions.length - 1
-      ] as keyof typeof memosDb;
-      latest.push(memosDb[latestVersion]);
-    }
-
-    return res.json(latest);
+    const data = await prisma.memo.findMany({
+      include: {
+        idea: true,
+        blocks: true,
+      },
+    });
+    data.sort(
+      (a, b) =>
+        a.metadata.modifiedAt.getTime() - b.metadata.modifiedAt.getTime()
+    );
+    return res.json(data);
   } catch (error) {
     if (!(error instanceof Error)) {
       throw new Error('Unknown server error');

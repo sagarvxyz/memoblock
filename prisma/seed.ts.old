@@ -1,0 +1,54 @@
+// import { PrismaClient } from '@prisma/client';
+// import { blocks, ideas, memos } from './db';
+
+// const prisma = new PrismaClient();
+// async function main() {
+//   for (const record of blocks) {
+//     const memoRefs = record.memoIds.map((id) => {
+//       return { id };
+//     });
+//     const block = await prisma.block.upsert({
+//       where: { id: record.id },
+//       update: {},
+//       create: {
+//         ...record,
+//         memos: {
+//           connect: memoRefs,
+//         },
+//       },
+//     });
+//   }
+//   for (const record of ideas) {
+//     const blockRefs = blocks.filter;
+//     const idea = await prisma.idea.upsert({
+//       where: { id: record.id },
+//       update: {},
+//       create: record,
+//     });
+//   }
+//   for (const record of memos) {
+//     const blockRefs = record.blockIds.map((id) => {
+//       return { id };
+//     });
+//     const memo = await prisma.memo.upsert({
+//       where: { id: record.id },
+//       update: {},
+//       create: {
+//         ...record,
+//         blocks: {
+//           connect: blockRefs,
+//         },
+//       },
+//     });
+//   }
+// }
+
+// main()
+//   .then(async () => {
+//     await prisma.$disconnect();
+//   })
+//   .catch(async (e) => {
+//     console.error(e);
+//     await prisma.$disconnect();
+//     process.exit(1);
+//   });

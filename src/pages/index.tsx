@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main>
       <h2>Admin Page</h2>
-      <Link className="AdminButton" href="/memos">
+      <Link className="AdminButton" href="/memos/latest">
         Memos
       </Link>
     </main>

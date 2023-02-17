@@ -1,22 +1,18 @@
 import { useState } from 'react';
 
-export default function Editor({
-  memo,
-  editorText,
-  setEditorText,
-  setIsEditMode,
-}) {
+export default function Editor({}) {
+  const [editorText, setEditorText] = useState('');
   const handleClick = () => {
-    setIsEditMode(false);
     console.log('should POST editor text to db and update memo');
   };
-  const handleChange = (event) => {
-    setEditorText(event.target.value);
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    setEditorText(e.target.value);
   };
   return (
     <main>
       <button onClick={handleClick}>Save</button>
-      <textarea className="Editor" onChange={(e) => handleChange(e)}>
+      <textarea className="Editor" onChange={handleChange}>
         {editorText}
       </textarea>
     </main>

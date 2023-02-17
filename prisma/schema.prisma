@@ -21,10 +21,10 @@ model Block {
 }
 
 model Idea {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  type     String
-  blocks   Block[]
-  memos    Memo[]
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  type   String
+  blocks Block[]
+  memos  Memo[]
 }
 
 model Memo {
