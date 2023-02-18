@@ -1,21 +1,6 @@
-import Editor from '@/components/Editor';
-import { MemoWithIdeaAndBlocks } from '@/pages/api/memos/new';
-import { SetStateAction } from 'react';
+import MemoEditor from '@/components/MemoEditor';
+import { useRouter } from 'next/router';
 
-export default function editor({
-  memos,
-  editorText,
-  setEditorText,
-}: {
-  memos: MemoWithIdeaAndBlocks[];
-  editorText: string;
-  setEditorText: React.Dispatch<SetStateAction<string>>;
-}) {
-  return (
-    <Editor
-      memos={memos}
-      editorText={editorText}
-      setEditorText={setEditorText}
-    />
-  );
+export default function Editor() {
+  return <MemoEditor />;
 }

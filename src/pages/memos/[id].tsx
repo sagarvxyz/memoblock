@@ -1,50 +1,38 @@
 import EditButton from '@/components/EditButton';
-import { Memo } from '@prisma/client';
+import { Metadata } from '@prisma/client';
 import { useRouter } from 'next/router';
-import {
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { MemoWithIdeaAndBlocks } from '../api/memos/new';
 
-export default function MemoPage({
-  memos,
-  setMemos,
-  setEditorText,
-}: {
-  memos: MemoWithIdeaAndBlocks[];
-  setMemos: React.Dispatch<SetStateAction<MemoWithIdeaAndBlocks[]>>;
-  setEditorText: React.Dispatch<SetStateAction<string>>;
-}) {
+export default function MemoPage() {
+  const [activeMemo, setActiveMemo] = useState<
+    MemoWithIdeaAndBlocks | Record<string, never>
+  >({});
   const router = useRouter();
   const { id } = router.query;
-  let memoId = '';
-  if (typeof id === 'string') {
-    memoId = id;
-  } else if (Array.isArray(id)) {
-    memoId = id[0];
-  }
-  const { current: memoRef } = useRef(memos);
   useEffect(() => {
-    const updatedMemos = memoRef.filter((memo) => memo.id !== id);
-    async function fetchData() {
+    async function fetchMemo(id: string) {
       const res = await fetch(`/api/memos/${id}`);
       const data = await res.json();
-
-      updatedMemos.push(data);
-      setMemos(updatedMemos);
+      const newMemo = JSON.parse(JSON.stringify(data));
+      setActiveMemo(newMemo);
     }
-    fetchData();
-  }, [id, memoRef, setMemos]);
-  const activeMemo = memos.filter((memo) => memo.id === id)[0];
-  const content = activeMemo.content;
+    if (typeof id === 'string') {
+      fetchMemo(id);
+    }
+  }, [id]);
+
+  let markdown = '';
+  if (Object.keys(activeMemo).length) {
+    markdown = `# ${activeMemo.metadata.title}
+  ${activeMemo.content}`;
+  }
+
   return (
     <>
-      <EditButton memos={memos} />
-      <div className="MemoContent">{content}</div>
+      <EditButton />
+      <ReactMarkdown>{markdown}</ReactMarkdown>
     </>
   );
 }
