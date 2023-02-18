@@ -31,6 +31,7 @@ model Memo {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
   blockIds String[] @db.ObjectId
   blocks   Block[]  @relation(fields: [blockIds], references: [id])
+  content  String
   ideaId   String   @db.ObjectId
   idea     Idea     @relation(fields: [ideaId], references: [id])
   metadata Metadata

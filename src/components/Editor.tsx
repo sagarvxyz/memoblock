@@ -1,20 +1,21 @@
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
+import SaveButton from './SaveButton';
 
-export default function Editor({}) {
-  const [editorText, setEditorText] = useState('');
-  const handleClick = () => {
-    console.log('should POST editor text to db and update memo');
-  };
+export default function Editor({
+  editorText,
+  setEditorText,
+}: {
+  editorText: string;
+  setEditorText: React.Dispatch<SetStateAction<string>>;
+}) {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
     setEditorText(e.target.value);
   };
   return (
     <main>
-      <button onClick={handleClick}>Save</button>
-      <textarea className="Editor" onChange={handleChange}>
-        {editorText}
-      </textarea>
+      <SaveButton editorText={editorText} />
+      <textarea className="Editor" onChange={handleChange} value={editorText} />
     </main>
   );
 }

@@ -21,12 +21,31 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       createdAt: new Date(),
       modifiedAt: new Date(),
     };
+
     const data = (await prisma.memo.create({
       data: {
         metadata,
         idea: {
           create: {
             type: 'memo',
+          },
+        },
+        content: 'Enter text here',
+        blocks: {
+          create: {
+            idea: {
+              create: {
+                type: 'block',
+              },
+            },
+            content: 'Enter text here',
+            metadata: {
+              title: 'Untitled',
+              author: 'Demo',
+              tags: [],
+              createdAt: new Date(),
+              modifiedAt: new Date(),
+            },
           },
         },
       },
