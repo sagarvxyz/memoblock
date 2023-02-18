@@ -1,18 +1,22 @@
 import EditButton from '@/components/EditButton';
 import { Memo } from '@prisma/client';
 import { useRouter } from 'next/router';
-import { SetStateAction, useEffect, useState } from 'react';
+import {
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { MemoWithIdeaAndBlocks } from '../api/memos/new';
 
 export default function MemoPage({
   memos,
-  activeMemo,
-  setActiveMemo,
+  setMemos,
   setEditorText,
 }: {
   memos: MemoWithIdeaAndBlocks[];
-  activeMemo: MemoWithIdeaAndBlocks;
-  setActiveMemo: React.Dispatch<SetStateAction<MemoWithIdeaAndBlocks>>;
+  setMemos: React.Dispatch<SetStateAction<MemoWithIdeaAndBlocks[]>>;
   setEditorText: React.Dispatch<SetStateAction<string>>;
 }) {
   const router = useRouter();
@@ -23,19 +27,23 @@ export default function MemoPage({
   } else if (Array.isArray(id)) {
     memoId = id[0];
   }
+  const { current: memoRef } = useRef(memos);
   useEffect(() => {
+    const updatedMemos = memoRef.filter((memo) => memo.id !== id);
     async function fetchData() {
       const res = await fetch(`/api/memos/${id}`);
       const data = await res.json();
-      setActiveMemo(data);
+
+      updatedMemos.push(data);
+      setMemos(updatedMemos);
     }
     fetchData();
-  }, [setActiveMemo, id]);
-
+  }, [id, memoRef, setMemos]);
+  const activeMemo = memos.filter((memo) => memo.id === id)[0];
   const content = activeMemo.content;
   return (
     <>
-      <EditButton id={memoId} memos={memos} setEditorText={setEditorText} />
+      <EditButton memos={memos} />
       <div className="MemoContent">{content}</div>
     </>
   );
