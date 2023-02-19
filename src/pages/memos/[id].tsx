@@ -3,7 +3,7 @@ import { Metadata } from '@prisma/client';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { MemoWithIdeaAndBlocks } from '../api/memos/new';
+import { MemoWithIdeaAndBlocks } from '@/types';
 
 export default function MemoPage() {
   const [activeMemo, setActiveMemo] = useState<
@@ -25,8 +25,8 @@ export default function MemoPage() {
 
   let markdown = '';
   if (Object.keys(activeMemo).length) {
-    markdown = `# ${activeMemo.metadata.title}
-  ${activeMemo.content}`;
+    markdown += `# ${activeMemo.metadata.title}  `;
+    activeMemo.blocks.map((block) => (markdown += `${block.content}  `));
   }
 
   return (

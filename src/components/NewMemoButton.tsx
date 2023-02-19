@@ -8,6 +8,7 @@ export default function NewMemoButton() {
     e.preventDefault();
     const res = await fetch('/api/memos/new', { method: 'POST' });
     const data = await res.json();
+    console.log(data);
     const { id } = data;
     const url = `/edit/memo/${id}`;
     router.push(url);

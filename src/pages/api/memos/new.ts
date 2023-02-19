@@ -18,6 +18,8 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       title: 'Untitled',
       author: 'Demo',
       tags: [],
+      status: 'draft',
+      source: null,
       createdAt: new Date(),
       modifiedAt: new Date(),
     };
@@ -30,7 +32,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
             type: 'memo',
           },
         },
-        content: 'Enter text here',
         blocks: {
           create: {
             idea: {
@@ -39,13 +40,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
               },
             },
             content: 'Enter text here',
-            metadata: {
-              title: 'Untitled',
-              author: 'Demo',
-              tags: [],
-              createdAt: new Date(),
-              modifiedAt: new Date(),
-            },
+            metadata,
           },
         },
       },
