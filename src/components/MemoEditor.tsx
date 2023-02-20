@@ -27,7 +27,12 @@ export default function MemoEditor() {
     <main>
       <SaveMemoButton activeMemo={activeMemo} blocks={blocks} />
       {blocks.map((block) => (
-        <BlockEditor key={block.id} block={block} setBlocks={setBlocks} />
+        <BlockEditor
+          key={block.id}
+          id={block.id}
+          blocks={blocks}
+          setBlocks={setBlocks}
+        />
       ))}
     </main>
   );

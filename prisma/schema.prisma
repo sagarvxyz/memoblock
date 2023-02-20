@@ -22,7 +22,7 @@ model Block {
 
 model Idea {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  type     IdeaTypes
+  type     String
   blockIds String[]  @db.ObjectId
   memoIds  String[]  @db.ObjectId
   blocks   Block[]

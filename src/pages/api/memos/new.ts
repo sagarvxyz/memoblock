@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient, Memo, Metadata, Block, Idea } from '@prisma/client';
+import { PrismaClient, Metadata } from '@prisma/client';
+import { IdeaWithBlocksAndMemos, MemoWithIdeaAndBlocks } from '@/types';
 
 const prisma = new PrismaClient();
 
@@ -14,42 +15,15 @@ export default async function handler(
 
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const metadata: Metadata = {
-      title: 'Untitled',
-      author: 'Demo',
-      tags: [],
-      status: 'draft',
-      source: null,
-      createdAt: new Date(),
-      modifiedAt: new Date(),
-    };
-
-    const data = (await prisma.memo.create({
-      data: {
-        metadata,
-        idea: {
-          create: {
-            type: 'memo',
-          },
-        },
-        blocks: {
-          create: {
-            idea: {
-              create: {
-                type: 'block',
-              },
-            },
-            content: 'Enter text here',
-            metadata,
-          },
-        },
-      },
+    const data = (await prisma.idea.create({
+      data: defaultData,
       include: {
-        idea: true,
+        memos: true,
         blocks: true,
       },
-    })) satisfies MemoWithIdeaAndBlocks;
-    return res.json(data);
+    })) satisfies IdeaWithBlocksAndMemos;
+    const newMemo = data.memos[0];
+    return res.json(newMemo);
   } catch (error) {
     if (!(error instanceof Error)) {
       throw new Error('Unknown server error');
@@ -59,7 +33,32 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export interface MemoWithIdeaAndBlocks extends Memo {
-  idea: Idea;
-  blocks: Block[];
-}
+const defaultMetadata: Metadata = {
+  title: 'Untitled',
+  author: 'Unknown',
+  status: 'draft',
+  source: null,
+  tags: [],
+  createdAt: new Date(),
+  modifiedAt: new Date(),
+};
+
+const defaultData = {
+  type: 'memo',
+  memos: {
+    create: {
+      metadata: defaultMetadata,
+      blocks: {
+        create: {
+          content: 'Enter text here',
+          metadata: defaultMetadata,
+          idea: {
+            create: {
+              type: 'block',
+            },
+          },
+        },
+      },
+    },
+  },
+};
