@@ -3,16 +3,17 @@ import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 
 export default function BlockEditor({
   id,
+  blockIndex,
   blocks,
   setBlocks,
 }: {
   id: Block['id'];
+  blockIndex: keyof typeof blocks;
   blocks: Block[];
   setBlocks: Dispatch<SetStateAction<Block[]>>;
 }) {
   const newBlocks = JSON.parse(JSON.stringify(blocks));
-  const i = newBlocks.findIndex((block: Block) => block.id === id);
-  const newBlock = newBlocks[i];
+  const newBlock = newBlocks[blockIndex];
   const [content, setContent] = useState(newBlock.content);
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     e.preventDefault;

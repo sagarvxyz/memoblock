@@ -15,14 +15,15 @@ export default function SaveMemoButton({
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    const data = JSON.parse(JSON.stringify(activeMemo));
-    data.blocks = JSON.parse(JSON.stringify(blocks));
+    const body = JSON.parse(JSON.stringify(activeMemo));
+    body.blocks = JSON.parse(JSON.stringify(blocks));
     // post the memo to the existing memo.
     const res = await fetch(`/api/memos/${id}`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify(body),
     });
-    const url = `/memos/${id}`;
+    const data = await res.json();
+    const url = `/memos/${data.id}`;
     router.push(url);
   };
   return <button onClick={handleClick}>Save</button>;
