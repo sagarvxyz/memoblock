@@ -55,7 +55,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
     } else if (JSON.stringify(data) !== JSON.stringify(prevData)) {
       data = await createRecords(data, prevData);
     }
-
     return res.json(data);
   } catch (error) {
     if (!(error instanceof Error)) {
@@ -73,7 +72,6 @@ async function createRecords(
   try {
     // check if record has changed
     let recordHasChanged = JSON.stringify(memo) !== JSON.stringify(prevMemo);
-
     if (!recordHasChanged) return;
     // compare each block object from new memo and see if it changed from prev
     const blockIds = [];
@@ -82,8 +80,8 @@ async function createRecords(
         (prevBlock) => prevBlock.id === block.id
       )[0];
       let blockId = '';
-      // if block is new
-      // else if block has been changed
+      // if block is new then create new idea
+      // else if block has been changed then create new block in idea
       // else no change
       if (!block.id) {
         const data = await prisma.idea.create({
@@ -123,13 +121,11 @@ async function createRecords(
       }
       blockIds.push(blockId);
     }
-    // update blockIds in memo record
-
+    // connect blocks to new memo
     memo.blockIds = blockIds;
     const connect = blockIds.map((blockId) => {
       return { id: blockId };
     });
-
     // create new memo under the same idea
     const data = await prisma.memo.create({
       data: {
