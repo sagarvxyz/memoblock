@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Memo, PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,12 +12,12 @@ export default async function handler(
 
 async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const data = (await prisma.memo.findMany({
+    const data = await prisma.memo.findMany({
       select: {
         id: true,
         metadata: true,
       },
-    })) satisfies MemoMetadata[];
+    });
     data.sort(
       (a, b) =>
         a.metadata.modifiedAt.getTime() - b.metadata.modifiedAt.getTime()
@@ -32,9 +30,4 @@ async function GET(req: NextApiRequest, res: NextApiResponse) {
     console.log(error.message);
     return res.status(500).json(error.message);
   }
-}
-
-export interface MemoMetadata {
-  id: Memo['id'];
-  metadata: Memo['metadata'];
 }

@@ -1,9 +1,7 @@
-import { IdeaWithBlocksAndMemos } from '@/types';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const prisma = new PrismaClient();
-
+// handle routes
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -17,17 +15,18 @@ export default async function handler(
   }
 }
 
+// GET idea with blocks and memos
 async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
     let { id } = req.query;
     if (typeof id !== 'string') throw Error('Invalid ID format');
-    const data = (await prisma.idea.findUnique({
+    const data = await prisma.idea.findUnique({
       where: { id },
       include: {
         blocks: true,
         memos: true,
       },
-    })) satisfies IdeaWithBlocksAndMemos | null;
+    });
     if (!data) throw Error('ID not found');
     return res.json(data);
   } catch (error) {
@@ -38,7 +37,7 @@ async function GET(req: NextApiRequest, res: NextApiResponse) {
     return res.status(500).json(error.message);
   }
 }
-
+// POST an update to an existing idea
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   try {
     let { id } = req.query;
@@ -50,9 +49,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
     if (id) {
       record.where = { id };
     }
-    const data = (await prisma.idea.update(
-      record
-    )) satisfies IdeaWithBlocksAndMemos;
+    const data = await prisma.idea.update(record);
     return res.json(data);
   } catch (error) {
     if (!(error instanceof Error)) {

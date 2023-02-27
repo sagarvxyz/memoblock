@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient, Memo, Block } from '@prisma/client';
-import { MemoWithIdeaAndBlocks } from '@/types';
+import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
-const prisma = new PrismaClient();
-
+// handle routes
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -14,7 +13,7 @@ export default async function handler(
     return POST(req, res);
   }
 }
-
+// GET memo with provided ID
 async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
     let { id } = req.query;
@@ -36,19 +35,19 @@ async function GET(req: NextApiRequest, res: NextApiResponse) {
     return res.status(500).json(error.message);
   }
 }
-
+// POST an update to memo
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   try {
     let { id } = req.query;
     if (typeof id !== 'string') throw Error('Invalid ID format');
     let data = JSON.parse(req.body);
-    const prevData = (await prisma.memo.findUnique({
+    const prevData = await prisma.memo.findUnique({
       where: { id },
       include: {
         blocks: true,
         idea: true,
       },
-    })) satisfies MemoWithIdeaAndBlocks | null;
+    });
 
     if (!prevData) {
       throw Error('Record does not already exist in DB.');
@@ -65,24 +64,38 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
+// generate custom type from existing Prisma models
+const memoWithBlocksAndIdeas = Prisma.validator<Prisma.MemoArgs>()({
+  include: { blocks: true, idea: true },
+});
+type MemoWithBlocksAndIdea = Prisma.MemoGetPayload<
+  typeof memoWithBlocksAndIdeas
+>;
+/**
+ * Compares user edited Memo with existing Memo in database and creates or updates records.
+ * If Memo !== prevMemo then create new Memo in the same Idea object.
+ * For each Block:
+ *  - if net new, create a new Block and Idea
+ *  - if updated, create a new Block in prevBlock Idea
+ *  - else no change
+ * Then link the list of Block refs with the new Memo.
+ */
 async function createRecords(
-  memo: MemoWithIdeaAndBlocks,
-  prevMemo: MemoWithIdeaAndBlocks
+  memo: MemoWithBlocksAndIdea,
+  prevMemo: MemoWithBlocksAndIdea
 ) {
   try {
-    // check if record has changed
+    // compare Memos
     let recordHasChanged = JSON.stringify(memo) !== JSON.stringify(prevMemo);
     if (!recordHasChanged) return;
-    // compare each block object from new memo and see if it changed from prev
+    // compare Blocks and update / create if records have changed
     const blockIds = [];
     for (const block of memo.blocks) {
       const prevBlock = prevMemo.blocks.filter(
         (prevBlock) => prevBlock.id === block.id
       )[0];
       let blockId = '';
-      // if block is new then create new idea
-      // else if block has been changed then create new block in idea
-      // else no change
+      // create new Block records
       if (!block.id) {
         const data = await prisma.idea.create({
           data: {
@@ -114,14 +127,13 @@ async function createRecords(
             blocks: true,
           },
         });
-        console.log('changed', data);
         blockId = data.blocks[data.blocks.length - 1].id;
       } else {
         blockId = prevBlock.id;
       }
       blockIds.push(blockId);
     }
-    // connect blocks to new memo
+    // connect Block refs to new Memo
     memo.blockIds = blockIds;
     const connect = blockIds.map((blockId) => {
       return { id: blockId };
@@ -146,11 +158,4 @@ async function createRecords(
   } catch (error) {
     console.log(error);
   }
-}
-
-function getContent(blocks: Block[]) {
-  return blocks.reduce(
-    (content, block) => (content += `${block.content}  `),
-    ''
-  );
 }

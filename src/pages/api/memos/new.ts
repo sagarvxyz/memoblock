@@ -1,8 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient, Metadata } from '@prisma/client';
-import { IdeaWithBlocksAndMemos, MemoWithIdeaAndBlocks } from '@/types';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,13 +12,47 @@ export default async function handler(
 
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const data = (await prisma.idea.create({
-      data: defaultData,
+    const data = await prisma.idea.create({
+      data: {
+        type: 'memo',
+        memos: {
+          create: {
+            metadata: {
+              title: 'Untitled',
+              author: 'Unknown',
+              status: 'draft',
+              source: null,
+              tags: [],
+              createdAt: new Date(),
+              modifiedAt: new Date(),
+            },
+            blocks: {
+              create: {
+                content: 'Enter text here',
+                metadata: {
+                  title: 'Untitled',
+                  author: 'Unknown',
+                  status: 'draft',
+                  source: null,
+                  tags: [],
+                  createdAt: new Date(),
+                  modifiedAt: new Date(),
+                },
+                idea: {
+                  create: {
+                    type: 'block',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       include: {
         memos: true,
         blocks: true,
       },
-    })) satisfies IdeaWithBlocksAndMemos;
+    });
     const newMemo = data.memos[0];
     return res.json(newMemo);
   } catch (error) {
@@ -32,33 +63,3 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
     return res.status(500).json(error.message);
   }
 }
-
-const defaultMetadata: Metadata = {
-  title: 'Untitled',
-  author: 'Unknown',
-  status: 'draft',
-  source: null,
-  tags: [],
-  createdAt: new Date(),
-  modifiedAt: new Date(),
-};
-
-const defaultData = {
-  type: 'memo',
-  memos: {
-    create: {
-      metadata: defaultMetadata,
-      blocks: {
-        create: {
-          content: 'Enter text here',
-          metadata: defaultMetadata,
-          idea: {
-            create: {
-              type: 'block',
-            },
-          },
-        },
-      },
-    },
-  },
-};

@@ -1,32 +1,22 @@
 import EditButton from '@/components/EditButton';
-import { Metadata } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { MemoWithIdeaAndBlocks } from '@/types';
 
 export default function MemoPage() {
-  const [activeMemo, setActiveMemo] = useState<
-    MemoWithIdeaAndBlocks | Record<string, never>
-  >({});
+  // Fetch memo and cache on page load.
   const router = useRouter();
   const { id } = router.query;
-  useEffect(() => {
-    async function fetchMemo(id: string) {
-      const res = await fetch(`/api/memos/${id}`);
-      const data = await res.json();
-      const newMemo = JSON.parse(JSON.stringify(data));
-      setActiveMemo(newMemo);
-    }
-    if (typeof id === 'string') {
-      fetchMemo(id);
-    }
-  }, [id]);
-
+  const fetchMemo = async () => {
+    const res = await fetch(`/api/memos/${id}`);
+    return res.json();
+  };
+  const { data, isLoading } = useQuery(['memo', id], fetchMemo);
+  console.log(data);
   let markdown = '';
-  if (Object.keys(activeMemo).length) {
-    markdown += `# ${activeMemo.metadata.title}  `;
-    activeMemo.blocks.map((block) => (markdown += `${block.content}  `));
+  if (!isLoading) {
+    markdown += `# ${data.metadata.title}  `;
+    data.blocks.map((block) => (markdown += `${block.content}  `));
   }
 
   return (
