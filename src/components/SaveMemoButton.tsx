@@ -1,10 +1,9 @@
 import { useRouter } from 'next/router';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { MouseEvent } from 'react';
 
 export default function SaveMemoButton({ memo, blocks }) {
   const router = useRouter();
-  const query = useQueryClient();
   const { id } = router.query;
 
   const fetchMemo = async (data) => {

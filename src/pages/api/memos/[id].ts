@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
+import { prisma } from '@/utils/prisma';
+import { MemoWithBlocksAndIdea } from '@/utils/types';
 
 // handle routes
 export default async function handler(
@@ -64,13 +64,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-// generate custom type from existing Prisma models
-const memoWithBlocksAndIdeas = Prisma.validator<Prisma.MemoArgs>()({
-  include: { blocks: true, idea: true },
-});
-type MemoWithBlocksAndIdea = Prisma.MemoGetPayload<
-  typeof memoWithBlocksAndIdeas
->;
 /**
  * Compares user edited Memo with existing Memo in database and creates or updates records.
  * If Memo !== prevMemo then create new Memo in the same Idea object.

@@ -12,7 +12,6 @@ export default function MemoPage() {
     return res.json();
   };
   const { data, isLoading } = useQuery(['memo', id], fetchMemo);
-  console.log(data);
   let markdown = '';
   if (!isLoading) {
     markdown += `# ${data.metadata.title}  `;

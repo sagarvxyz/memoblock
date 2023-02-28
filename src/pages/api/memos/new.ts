@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/utils/prisma';
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,25 +26,25 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
               createdAt: new Date(),
               modifiedAt: new Date(),
             },
-            blocks: {
-              create: {
-                content: 'Enter text here',
-                metadata: {
-                  title: 'Untitled',
-                  author: 'Unknown',
-                  status: 'draft',
-                  source: null,
-                  tags: [],
-                  createdAt: new Date(),
-                  modifiedAt: new Date(),
-                },
-                idea: {
-                  create: {
-                    type: 'block',
-                  },
-                },
-              },
-            },
+            // blocks: {
+            //   create: {
+            //     content: 'Enter text here',
+            //     metadata: {
+            //       title: 'Untitled',
+            //       author: 'Unknown',
+            //       status: 'draft',
+            //       source: null,
+            //       tags: [],
+            //       createdAt: new Date(),
+            //       modifiedAt: new Date(),
+            //     },
+            //     idea: {
+            //       create: {
+            //         type: 'block',
+            //       },
+            //     },
+            //   },
+            // },
           },
         },
       },
