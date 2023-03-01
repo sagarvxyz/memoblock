@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '@/utils/prisma';
-import { MemoWithBlocksAndIdea } from '@/utils/types';
+import { prisma } from '@/common/prisma';
+import { MemoWithBlocksAndIdea } from '@/common/types';
 
 // handle routes
 export default async function handler(
@@ -81,6 +81,7 @@ async function createRecords(
     // compare Memos
     let recordHasChanged = JSON.stringify(memo) !== JSON.stringify(prevMemo);
     if (!recordHasChanged) return;
+    console.log(memo);
     // compare Blocks and update / create if records have changed
     const blockIds = [];
     for (const block of memo.blocks) {
@@ -89,7 +90,7 @@ async function createRecords(
       )[0];
       let blockId = '';
       // create new Block records
-      if (!block.id) {
+      if (!prevBlock) {
         const data = await prisma.idea.create({
           data: {
             type: 'block',

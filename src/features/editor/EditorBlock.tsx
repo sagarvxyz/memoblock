@@ -1,5 +1,4 @@
-import { EditorBlock } from '@/utils/EditorBlock';
-import { BlockModel, NewEditorBlock } from '@/utils/types';
+import { BlockModel } from '@/common/types';
 import {
   ChangeEvent,
   Dispatch,
@@ -7,8 +6,10 @@ import {
   SetStateAction,
   useState,
 } from 'react';
+import { Block } from './BlockClass';
+import { NewEditorBlock } from './editorTypes';
 
-export default function BlockEditor({
+export function EditorBlock({
   blockIndex,
   blocks,
   setBlocks,
@@ -26,11 +27,9 @@ export default function BlockEditor({
   };
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.code === 'Enter') {
-      console.log('before:', blocks);
-      const newBlock = new EditorBlock(blockIndex);
-      blocksClone.splice(blockIndex + 1, 0, newBlock);
+      const block = new Block(blockIndex);
+      blocksClone.splice(blockIndex + 1, 0, block);
       setBlocks(blocksClone);
-      console.log('after:', blocks);
     }
   };
   return (

@@ -1,4 +1,4 @@
-import EditButton from '@/components/EditButton';
+import { EditButton } from '@/features/nav/MemoEditButton';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import ReactMarkdown from 'react-markdown';
@@ -13,7 +13,7 @@ export default function MemoPage() {
   };
   const { data, isLoading } = useQuery(['memo', id], fetchMemo);
   let markdown = '';
-  if (!isLoading) {
+  if (!isLoading && data) {
     markdown += `# ${data.metadata.title}  `;
     data.blocks.map((block) => (markdown += `${block.content}  `));
   }

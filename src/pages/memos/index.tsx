@@ -1,5 +1,5 @@
-import MemoListDisplay from '@/components/MemoListDisplay';
-import NewMemoButton from '@/components/NewMemoButton';
+import { MemoList } from '@/features/nav/MemoList';
+import { MemoNewButton } from '@/features/nav/MemoNewButton';
 import { useQuery } from '@tanstack/react-query';
 
 export default function MemoListPage() {
@@ -15,8 +15,8 @@ export default function MemoListPage() {
   return (
     <main>
       <h2>Memos</h2>
-      <MemoListDisplay list={list} />
-      <NewMemoButton />
+      <MemoList list={list} />
+      <MemoNewButton />
     </main>
   );
 }

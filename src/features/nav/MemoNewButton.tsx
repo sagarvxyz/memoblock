@@ -1,8 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 
-export default function NewMemoButton() {
+export function MemoNewButton() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const fetchMemo = async () => {
     const res = await fetch('/api/memos/new', { method: 'POST' });
     return res.json();
@@ -10,6 +11,7 @@ export default function NewMemoButton() {
   const mutation = useMutation({
     mutationFn: fetchMemo,
     onSuccess: (data, variables, context) => {
+      queryClient.setQueryData(['memo', data.id], data);
       const url = `/edit/memo/${data.id}`;
       router.push(url);
     },

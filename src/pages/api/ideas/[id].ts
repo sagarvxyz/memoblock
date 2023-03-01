@@ -1,5 +1,5 @@
-import { prisma } from '@/utils/prisma';
-import { IdeaWithBlocksAndMemos } from '@/utils/types';
+import { prisma } from '@/common/prisma';
+import { IdeaWithBlocksAndMemos } from '@/common/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 

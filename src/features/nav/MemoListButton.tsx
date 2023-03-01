@@ -1,9 +1,12 @@
-import { MemoMetadata } from '@/pages/api/memos';
-import { MemoWithIdeaAndBlocks } from '@/pages/api/memos/new';
+import { MemoModel } from '@/common/types';
 import { useRouter } from 'next/router';
 import { MouseEvent, SetStateAction, useEffect, useState } from 'react';
 
-export default function MemoListButton({ memo }: { memo: MemoMetadata }) {
+export function MemoListButton({
+  memo,
+}: {
+  memo: Pick<MemoModel, 'id' | 'metadata'>;
+}) {
   const router = useRouter();
   const modifiedAt = new Date(memo.metadata.modifiedAt).toLocaleDateString();
 
