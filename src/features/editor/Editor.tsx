@@ -5,7 +5,7 @@ import { EditorSaveButton } from './EditorSaveButton';
 import { NewEditorBlock } from './editorTypes';
 import { Block } from './BlockClass';
 
-export function MemoEditor({ memo }: { memo: MemoWithBlocksAndIdea }) {
+export function Editor({ memo }: { memo: MemoWithBlocksAndIdea }) {
   const [blocks, setBlocks] = useState<(BlockModel | NewEditorBlock)[]>(
     memo?.blocks || []
   );

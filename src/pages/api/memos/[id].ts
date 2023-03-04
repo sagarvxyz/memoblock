@@ -68,6 +68,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
  * Compares user edited Memo with existing Memo in database and creates or updates records.
  * If Memo !== prevMemo then create new Memo in the same Idea object.
  * For each Block:
+ *  - if status === 'draft' then update existing record
  *  - if net new, create a new Block and Idea
  *  - if updated, create a new Block in prevBlock Idea
  *  - else no change
@@ -81,7 +82,6 @@ async function createRecords(
     // compare Memos
     let recordHasChanged = JSON.stringify(memo) !== JSON.stringify(prevMemo);
     if (!recordHasChanged) return;
-    console.log(memo);
     // compare Blocks and update / create if records have changed
     const blockIds = [];
     for (const block of memo.blocks) {
@@ -89,7 +89,7 @@ async function createRecords(
         (prevBlock) => prevBlock.id === block.id
       )[0];
       let blockId = '';
-      // create new Block records
+      // if no prior block then create new Block and Idea
       if (!prevBlock) {
         const data = await prisma.idea.create({
           data: {
@@ -106,22 +106,36 @@ async function createRecords(
           },
         });
         blockId = data.blocks[0].id;
+        // if content changed and then create new Block in same idea or update if draft
       } else if (prevBlock.content !== block.content) {
-        const data = await prisma.idea.update({
-          where: { id: prevBlock.ideaId },
-          data: {
-            blocks: {
-              create: {
-                content: block.content,
-                metadata: block.metadata,
+        if (prevBlock.metadata.status !== 'live') {
+          const data = await prisma.block.update({
+            where: { id: prevBlock.id },
+            data: {
+              ideaId: block.ideaId,
+              memoIds: block.memoIds,
+              content: block.content,
+              metadata: block.metadata,
+            },
+          });
+          blockId = prevBlock.id;
+        } else {
+          const data = await prisma.idea.update({
+            where: { id: prevBlock.ideaId },
+            data: {
+              blocks: {
+                create: {
+                  content: block.content,
+                  metadata: block.metadata,
+                },
               },
             },
-          },
-          include: {
-            blocks: true,
-          },
-        });
-        blockId = data.blocks[data.blocks.length - 1].id;
+            include: {
+              blocks: true,
+            },
+          });
+          blockId = data.blocks[data.blocks.length - 1].id;
+        }
       } else {
         blockId = prevBlock.id;
       }
@@ -132,23 +146,41 @@ async function createRecords(
     const connect = blockIds.map((blockId) => {
       return { id: blockId };
     });
-    // create new memo under the same idea
-    const data = await prisma.memo.create({
-      data: {
-        metadata: memo.metadata,
-        idea: {
-          connect: { id: memo.ideaId },
+    // create new / update memo under the same idea
+    if (memo.metadata.status !== 'live') {
+      const data = await prisma.memo.update({
+        where: { id: prevMemo.id },
+        data: {
+          ideaId: prevMemo.ideaId,
+          metadata: memo.metadata,
+          blocks: {
+            connect,
+          },
         },
-        blocks: {
-          connect,
+        include: {
+          idea: true,
+          blocks: true,
         },
-      },
-      include: {
-        idea: true,
-        blocks: true,
-      },
-    });
-    return data;
+      });
+      return data;
+    } else {
+      const data = await prisma.memo.create({
+        data: {
+          metadata: memo.metadata,
+          idea: {
+            connect: { id: memo.ideaId },
+          },
+          blocks: {
+            connect,
+          },
+        },
+        include: {
+          idea: true,
+          blocks: true,
+        },
+      });
+      return data;
+    }
   } catch (error) {
     console.log(error);
   }

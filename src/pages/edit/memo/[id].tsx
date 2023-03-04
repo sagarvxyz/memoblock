@@ -1,10 +1,10 @@
 import { MemoModel, MemoWithBlocksAndIdea } from '@/common/types';
-import { MemoEditor } from '@/features/editor/Editor';
+import { Editor } from '@/features/editor/Editor';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-export default function Editor() {
+export default function EditMemoPage() {
   const router = useRouter();
   const { id } = router.query;
   const query = useQueryClient();
@@ -12,5 +12,5 @@ export default function Editor() {
   if (!memo) {
     return <div>Error</div>;
   }
-  return <MemoEditor memo={memo} />;
+  return <Editor memo={memo} />;
 }
