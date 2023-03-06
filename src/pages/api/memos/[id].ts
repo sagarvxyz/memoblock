@@ -48,7 +48,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
         idea: true,
       },
     });
-
     if (!prevData) {
       throw Error('Record does not already exist in DB.');
     } else if (JSON.stringify(data) !== JSON.stringify(prevData)) {
@@ -115,7 +114,7 @@ async function createRecords(
               ideaId: block.ideaId,
               memoIds: block.memoIds,
               content: block.content,
-              metadata: block.metadata,
+              metadata: { ...block.metadata, modifiedAt: new Date() },
             },
           });
           blockId = prevBlock.id;
@@ -126,7 +125,7 @@ async function createRecords(
               blocks: {
                 create: {
                   content: block.content,
-                  metadata: block.metadata,
+                  metadata: { ...block.metadata, modifiedAt: new Date() },
                 },
               },
             },
@@ -147,12 +146,12 @@ async function createRecords(
       return { id: blockId };
     });
     // create new / update memo under the same idea
-    if (memo.metadata.status !== 'live') {
+    if (prevMemo.metadata.status !== 'live') {
       const data = await prisma.memo.update({
         where: { id: prevMemo.id },
         data: {
           ideaId: prevMemo.ideaId,
-          metadata: memo.metadata,
+          metadata: { ...memo.metadata, modifiedAt: new Date() },
           blocks: {
             connect,
           },
@@ -166,7 +165,7 @@ async function createRecords(
     } else {
       const data = await prisma.memo.create({
         data: {
-          metadata: memo.metadata,
+          metadata: { ...memo.metadata, modifiedAt: new Date() },
           idea: {
             connect: { id: memo.ideaId },
           },

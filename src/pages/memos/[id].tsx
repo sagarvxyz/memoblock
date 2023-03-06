@@ -1,3 +1,4 @@
+import { MemoWithBlocksAndIdea } from '@/common/types';
 import { EditButton } from '@/features/nav/MemoEditButton';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
@@ -11,11 +12,14 @@ export default function MemoPage() {
     const res = await fetch(`/api/memos/${id}`);
     return res.json();
   };
-  const { data, isLoading } = useQuery(['memo', id], fetchMemo);
+  const { data, isLoading } = useQuery<MemoWithBlocksAndIdea>(
+    ['memo', id],
+    fetchMemo
+  );
   let markdown = '';
   if (!isLoading && data) {
-    markdown += `# ${data.metadata.title}  `;
-    data.blocks.map((block) => (markdown += `${block.content}  `));
+    markdown += `# ${data.metadata.title}  \n`;
+    data.blocks.map((block) => (markdown += `${block.content}  \n`));
   }
 
   return (

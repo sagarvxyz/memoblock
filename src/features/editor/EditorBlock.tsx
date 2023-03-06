@@ -6,7 +6,7 @@ import {
   SetStateAction,
   useState,
 } from 'react';
-import { Block } from './BlockClass';
+import { Block } from './blockClass';
 import { NewEditorBlock } from './editorTypes';
 
 export function EditorBlock({
@@ -15,10 +15,10 @@ export function EditorBlock({
   setBlocks,
 }: {
   blockIndex: number;
-  blocks: (BlockModel | NewEditorBlock)[];
-  setBlocks: Dispatch<SetStateAction<(BlockModel | NewEditorBlock)[]>>;
+  blocks: Block[];
+  setBlocks: Dispatch<SetStateAction<Block[]>>;
 }) {
-  const blocksClone = JSON.parse(JSON.stringify(blocks)) as typeof blocks;
+  const blocksClone: typeof blocks = JSON.parse(JSON.stringify(blocks));
   const [content, setContent] = useState(blocksClone[blockIndex].content);
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -34,7 +34,7 @@ export function EditorBlock({
   };
   return (
     <textarea
-      className="Editor"
+      className="EditorBlock"
       onChange={handleChange}
       onKeyDown={handleKeyDown}
       defaultValue={content}

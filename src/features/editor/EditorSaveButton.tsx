@@ -1,15 +1,17 @@
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { MouseEvent } from 'react';
-import { BlockModel, MemoModel } from '@/common/types';
+import { BlockModel, MemoModel, MetadataModel } from '@/common/types';
 import { NewEditorBlock } from './editorTypes';
 
 export function EditorSaveButton({
   memo,
   blocks,
+  metadata,
 }: {
   memo: MemoModel;
   blocks: (BlockModel | NewEditorBlock)[];
+  metadata: MetadataModel;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -34,7 +36,19 @@ export function EditorSaveButton({
   });
   const handleClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault;
-    const updatedMemo = { ...memo, blocks };
+    const updatedMemo = {
+      ...memo,
+      blocks: blocks.map((block) => {
+        return {
+          ...block,
+          metadata: {
+            ...block.metadata,
+            status: metadata.status,
+          },
+        };
+      }),
+      metadata: { ...metadata },
+    };
     await mutation.mutate(updatedMemo);
   };
 
