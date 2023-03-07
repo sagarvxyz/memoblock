@@ -7,9 +7,9 @@ import {
   useState,
 } from 'react';
 import { Block } from './blockClass';
-import { NewEditorBlock } from './editorTypes';
+import styles from './Editor.module.css';
 
-export function EditorBlock({
+export function TextBlock({
   blockIndex,
   blocks,
   setBlocks,
@@ -27,6 +27,7 @@ export function EditorBlock({
   };
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.code === 'Enter') {
+      e.preventDefault();
       const block = new Block(blockIndex);
       blocksClone.splice(blockIndex + 1, 0, block);
       setBlocks(blocksClone);
@@ -34,7 +35,7 @@ export function EditorBlock({
   };
   return (
     <textarea
-      className="EditorBlock"
+      className={styles.textblock}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
       defaultValue={content}

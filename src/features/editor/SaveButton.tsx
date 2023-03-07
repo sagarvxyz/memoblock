@@ -3,8 +3,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { MouseEvent } from 'react';
 import { BlockModel, MemoModel, MetadataModel } from '@/common/types';
 import { NewEditorBlock } from './editorTypes';
+import styles from './Editor.module.css';
 
-export function EditorSaveButton({
+export function SaveButton({
   memo,
   blocks,
   metadata,
@@ -52,5 +53,9 @@ export function EditorSaveButton({
     await mutation.mutate(updatedMemo);
   };
 
-  return <button onClick={handleClick}>Save</button>;
+  return (
+    <button className={styles.button} onClick={handleClick}>
+      Save
+    </button>
+  );
 }

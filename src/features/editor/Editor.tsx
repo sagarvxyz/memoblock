@@ -4,11 +4,13 @@ import {
   MetadataModel,
 } from '@/common/types';
 import { useState } from 'react';
-import { EditorBlock } from './EditorBlock';
-import { EditorSaveButton } from './EditorSaveButton';
+import { TextBlock } from './TextBlock';
+import { SaveButton } from './SaveButton';
 import { NewEditorBlock } from './editorTypes';
 import { Block } from './blockClass';
 import { MetadataBlock } from './MetadataBlock';
+import styles from './Editor.module.css';
+import StatusSelector from './StatusSelector';
 
 export function Editor({ memo }: { memo: MemoWithBlocksAndIdea }) {
   const [blocks, setBlocks] = useState<(BlockModel | NewEditorBlock)[]>(
@@ -17,18 +19,20 @@ export function Editor({ memo }: { memo: MemoWithBlocksAndIdea }) {
   const [metadata, setMetadata] = useState<MetadataModel>(memo?.metadata || {});
 
   return (
-    <main>
-      <EditorSaveButton memo={memo} blocks={blocks} metadata={metadata} />
-      <h1>{memo?.metadata?.title ?? 'Untitled'}</h1>
+    <section className={styles.section}>
+      <div className={styles.header}>
+        <StatusSelector metadata={metadata} setMetadata={setMetadata} />
+        <SaveButton memo={memo} blocks={blocks} metadata={metadata} />
+      </div>
       <MetadataBlock metadata={metadata} setMetadata={setMetadata} />
       {blocks.map((block, i) => (
-        <EditorBlock
+        <TextBlock
           key={block.id}
           blockIndex={i}
           blocks={blocks}
           setBlocks={setBlocks}
         />
       ))}
-    </main>
+    </section>
   );
 }

@@ -1,0 +1,9 @@
+.section {
+  display: grid;
+  padding: 1rem;
+}
+
+.button {
+  width: fit-content;
+  justify-self: flex-end;
+}

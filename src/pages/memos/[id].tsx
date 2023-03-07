@@ -3,6 +3,7 @@ import { EditButton } from '@/features/nav/MemoEditButton';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import ReactMarkdown from 'react-markdown';
+import styles from './memos.module.css';
 
 export default function MemoPage() {
   // Fetch memo and cache on page load.
@@ -23,9 +24,9 @@ export default function MemoPage() {
   }
 
   return (
-    <>
+    <section className={styles.section}>
       <EditButton />
       <ReactMarkdown>{markdown}</ReactMarkdown>
-    </>
+    </section>
   );
 }
