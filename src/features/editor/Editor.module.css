@@ -1,0 +1,35 @@
+.section {
+  display: grid;
+  padding: 1rem;
+}
+.header {
+  display: flex;
+  justify-content: flex-end;
+}
+/* Save Button */
+.button {
+  justify-self: flex-end;
+}
+/* Metadata */
+.title,
+.title:focus {
+  border: none;
+  outline: none;
+}
+.status,
+.status:focus {
+  font-size: 1rem;
+  width: fit-content;
+  padding: 0.1rem;
+  border: none;
+  outline: none;
+}
+/* Blocks */
+.textblock,
+.textblock:focus {
+  font-size: 1rem;
+  font-family: 'Roboto';
+  border: none;
+  outline: none;
+  resize: none;
+}

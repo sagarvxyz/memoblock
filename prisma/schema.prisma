@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+model Block {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  ideaId   String   @db.ObjectId
+  idea     Idea     @relation(fields: [ideaId], references: [id])
+  memoIds  String[] @db.ObjectId
+  memos    Memo[]   @relation(fields: [memoIds], references: [id])
+  content  String
+  metadata Metadata
+}
+
+model Idea {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  type     String
+  blockIds String[]  @db.ObjectId
+  memoIds  String[]  @db.ObjectId
+  blocks   Block[]
+  memos    Memo[]
+}
+
+model Memo {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  blockIds String[] @db.ObjectId
+  blocks   Block[]  @relation(fields: [blockIds], references: [id])
+  ideaId   String   @db.ObjectId
+  idea     Idea     @relation(fields: [ideaId], references: [id])
+  metadata Metadata
+}
+
+model User {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  username  String @unique
+  email     String @unique
+  firstName String
+  lastName  String
+}
+
+type Metadata {
+  title      String
+  author     String
+  status     Statuses
+  source     Source?
+  tags       String[]
+  createdAt  DateTime
+  modifiedAt DateTime
+}
+
+type Source {
+  title  String?
+  author String?
+  url    String?
+}
+
+enum IdeaTypes {
+  block
+  memo
+}
+
+enum Statuses {
+  draft
+  live
+  outline
+}
